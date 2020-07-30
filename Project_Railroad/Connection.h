@@ -12,6 +12,8 @@ public:
 	virtual ~Connection();
 	void addNode(Node* node);
 	bool checkNode(Node* node);
+	Node* getOtherNode(Node* thisNode) const;
 	int getCost() const;
+	bool operator<(Connection* other);
 };
 

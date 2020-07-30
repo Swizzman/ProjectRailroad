@@ -3,10 +3,12 @@
 #include<fstream>
 #include<vector>
 #include"Node.h"
+#include "Priority_Queue.h"
 #include<sstream>
 using namespace std;
 std::vector<string> openFile(string path);
 int findNode(Node** arr, string nodeName, int nrOfNodes);
+void primsMST(Node** arr, int nrOfNodes);
 int main(int argc, char** argv)
 {
 	if (argc > 1)
@@ -91,4 +93,23 @@ int findNode(Node** arr, string nodeName, int nrOfNodes)
 		}
 	}
 	return index;
+}
+
+void primsMST(Node** arr, int nrOfNodes)
+{
+	int visitCap = 100;
+	int nrOfVisited = 0;
+	Node** visitedNodes = new Node * [visitCap] {nullptr};
+	visitedNodes[0] = arr[0];
+	visitedNodes[0]->setKnown();
+	nrOfVisited++;
+	Priority_Queue<Connection*> queue;
+	while (nrOfVisited < nrOfNodes)
+	{
+		for (int i = 0; i < nrOfVisited; i++)
+		{ 
+			std::vector<Connection*> vec = visitedNodes[i]->getConnectionsAsVector();
+		}
+	}
+	 
 }

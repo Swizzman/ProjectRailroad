@@ -34,7 +34,17 @@ bool Connection::checkNode(Node* node)
 	return found;
 }
 
+Node* Connection::getOtherNode(Node* thisNode) const
+{
+	return (thisNode == node1) ? node1 : node2;
+}
+
 int Connection::getCost() const
 {
-	return 0;
+	return cost;
+}
+
+bool Connection::operator<(Connection* other)
+{
+	return this->cost < other->cost;
 }
