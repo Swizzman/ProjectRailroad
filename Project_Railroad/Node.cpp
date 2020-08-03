@@ -1,72 +1,65 @@
 #include "Node.h"
 #include <iostream>
-void Node::expandConnections()
-{
-	connectionCap += 10;
-	Connection** temp = new Connection * [connectionCap] {nullptr};
-	for (int i = 0; i < nrOfConnections; i++)
-	{
-		temp[i] = connections[i];
-	}
-	delete[] connections;
-	connections = temp;
-	temp = nullptr;
-}
+//void Node::expandConnections()
+//{
+//	connectionCap += 10;
+//	Connection** temp = new Connection * [connectionCap] {nullptr};
+//	for (int i = 0; i < nrOfConnections; i++)
+//	{
+//		temp[i] = connections[i];
+//	}
+//	delete[] connections;
+//	connections = temp;
+//	temp = nullptr;
+//}
 
 Node::Node()
 {
 	this->name = "";
-	this->nrOfConnections = 0;
-	this->connectionCap = 10;
-	this->connections = new Connection * [connectionCap] {nullptr};
+
 	this->known = false;
 }
 
 Node::Node(std::string name)
 {
 	this->name = name;
-	this->nrOfConnections = 0;
-	this->connectionCap = 10;
-	this->connections = new Connection * [connectionCap] {nullptr};
+
 	this->known = false;
 }
 
 void Node::addConnection(Node* otherNode, int cost)
 {
-	if (nrOfConnections == connectionCap)
-	{
-		expandConnections();
-	}
-	connections[nrOfConnections] = new Connection(cost, this, otherNode);
-	otherNode->addConnection(connections[nrOfConnections]);
-	nrOfConnections++;
-	std::cout << "Connection Added between " << name << " And " << otherNode->getName() << "\nCost: " << cost << std::endl;
+	Connection* temp = new Connection(cost, this, otherNode);
+	connections.push_back(temp);
+	//connections[nrOfConnections] = new Connection(cost, this, otherNode);
+	otherNode->addConnection(temp);
+	//nrOfConnections++;
+	//std::cout << "Connection Added between " << name << " And " << otherNode->getName() << "\nCost: " << cost << std::endl;
 }
 
 void Node::addConnection(Connection* connection)
 {
-	if (nrOfConnections == connectionCap)
-	{
-		expandConnections();
-	}
-	connections[nrOfConnections++] = connection;
-	std::cout << "Connection Added from other node\n";
+	connections.push_back(connection);
+	//connections[nrOfConnections++] = connection;
+	//std::cout << "Connection Added from other node\n";
 }
 
 void Node::removeConnection(Node* otherNode)
 {
 	bool removed = false;
-	for (int i = 0; i < nrOfConnections && !removed; i++)
+	for (int i = 0; i < connections.size() && !removed; i++)
 	{
-		if (connections[i]->checkNode(otherNode))
+		if (connections.at(i)->checkNode(otherNode))
 		{
-			otherNode->removedByOther(connections[i]);
-			delete connections[i];
-			for (int y = i; y < nrOfConnections; y++)
-			{
-				connections[y] = connections[y + 1];
-			}
-			nrOfConnections--;
+			otherNode->removedByOther(connections.at(i));
+			connections.erase(connections.begin() + i);
+			//otherNode->removedByOther(connections[i]);
+			//delete connections[i];
+			//for (int y = i; y < nrOfConnections; y++)
+			//{
+			//	connections[y] = connections[y + 1];
+			//}
+			//nrOfConnections--;
 			removed = true;
 
 		}
@@ -78,14 +71,15 @@ void Node::removedByOther(Connection* connection)
 	bool removed = false;
 	for (int i = 0; i < nrOfConnections && !removed; i++)
 	{
-		if (connections[i] == connection)
+		if (connections.at(i) == connection)
 		{
-			for (int y = i; y < nrOfConnections; y++)
-			{
-				connections[y] = connections[y + 1];
-			}
-			removed = true;
-			nrOfConnections--;
+			connections.erase(connections.begin() + i);
+			//for (int y = i; y < nrOfConnections; y++)
+			//{
+			//	connections[y] = connections[y + 1];
+			//}
+			//removed = true;
+			//nrOfConnections--;
 		}
 	}
 }
@@ -129,12 +123,13 @@ Node* Node::getLowestCostNode()
 std::vector<Connection*> Node::getUnusedConnectionsAsVector()
 {
 	std::vector<Connection*> toReturn;
-	for (int i = 0; i < nrOfConnections; i++)
+	//std::cout << connections.size() << std::endl;
+	for (int i = 0; i < connections.size(); i++)
 	{
-		if (!connections[i]->getUsed())
+		if (!connections.at(i)->getUsed())
 		{
 
-			toReturn.push_back(connections[i]);
+			toReturn.push_back(connections.at(i));
 		}
 
 	}
@@ -144,11 +139,11 @@ std::vector<Connection*> Node::getUnusedConnectionsAsVector()
 std::vector<Connection*> Node::getUsedConnectionsAsVector()
 {
 	std::vector<Connection*> vec;
-	for (int i = 0; i < nrOfConnections; i++)
+	for (int i = 0; i < connections.size(); i++)
 	{
-		if (connections[i]->getUsedVar() && connections[i]->checkIfFirst(this))
+		if (connections.at(i)->getUsedVar() && connections.at(i)->checkIfFirst(this))
 		{
-			vec.push_back(connections[i]);
+			vec.push_back(connections.at(i));
 		}
 	}
 	return vec;
@@ -158,9 +153,5 @@ std::vector<Connection*> Node::getUsedConnectionsAsVector()
 
 Node::~Node()
 {
-	for (int i = 0; i < nrOfConnections; i++)
-	{
-		connections[i] = nullptr;
-	}
-	delete[] connections;
+
 }

@@ -8,9 +8,10 @@ private:
 	std::string name;
 	int nrOfConnections;
 	int connectionCap;
-	Connection** connections;
+	//Connection** connections;
+	std::vector<Connection*> connections;
 	bool known;
-	void expandConnections();
+	//void expandConnections();
 public:
 	Node();
 	Node(std::string name);
