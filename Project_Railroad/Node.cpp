@@ -75,8 +75,8 @@ void Node::removeConnection(Node* otherNode)
 
 void Node::removedByOther(Connection* connection)
 {
-	bool found = false;
-	for (int i = 0; i < nrOfConnections && !found; i++)
+	bool removed = false;
+	for (int i = 0; i < nrOfConnections && !removed; i++)
 	{
 		if (connections[i] == connection)
 		{
@@ -84,7 +84,7 @@ void Node::removedByOther(Connection* connection)
 			{
 				connections[y] = connections[y + 1];
 			}
-			found = true;
+			removed = true;
 			nrOfConnections--;
 		}
 	}
@@ -126,14 +126,32 @@ Node* Node::getLowestCostNode()
 	return toReturn;
 }
 
-std::vector<Connection*> Node::getConnectionsAsVector() const
+std::vector<Connection*> Node::getUnusedConnectionsAsVector()
 {
 	std::vector<Connection*> toReturn;
 	for (int i = 0; i < nrOfConnections; i++)
 	{
-		toReturn.push_back(connections[i]);
+		if (!connections[i]->getUsed())
+		{
+
+			toReturn.push_back(connections[i]);
+		}
+
 	}
 	return toReturn;
+}
+
+std::vector<Connection*> Node::getUsedConnectionsAsVector()
+{
+	std::vector<Connection*> vec;
+	for (int i = 0; i < nrOfConnections; i++)
+	{
+		if (connections[i]->getUsedVar() && connections[i]->checkIfFirst(this))
+		{
+			vec.push_back(connections[i]);
+		}
+	}
+	return vec;
 }
 
 

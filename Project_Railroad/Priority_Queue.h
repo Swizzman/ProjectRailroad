@@ -1,77 +1,35 @@
 #pragma once
-template <typename T>
+#include <iostream>
+#include "Connection.h"
 class Priority_Queue
 {
 private:
-	struct Node 
+	struct Node
 	{
-		T element;
+		Connection* element;
 		Node* next = nullptr;
-		Node(const T& element)
+		Node(Connection*& element)
 		{
 			this->element = element;
 		}
+		virtual ~Node()
+		{
+			element = nullptr;
+			next = nullptr;
+		}
+
 	};
-	Node* root = nullptr;
-	void removeNode(Node* node);
+	Node* root;
+	void removeSpecificNode(Node* node);
 public:
 	Priority_Queue();
 	virtual  ~Priority_Queue();
-	void insert(T element);
-	T getMin();
+	void insert(Connection* element);
+	bool getEmpty() const;
+	Connection* getMin();
+	void emptyQueue();
+	
 };
 
-template<typename T>
-inline  void Priority_Queue<T>::removeNode(Node* node)
-{
-	if (node->next != nullptr)
-	{
-		node->element = node->next->element;
-		removeNode(node->next);
-	}
-	else
-	{
-		delete node;
-	}
-}
 
-template<typename T>
-inline Priority_Queue<T>::Priority_Queue()
-{
-}
 
-template<typename T>
-inline Priority_Queue<T>::~Priority_Queue()
-{
-}
-
-template<typename T>
-inline void Priority_Queue<T>::insert(T element)
-{
-	Node* temp = new Node(element);
-	temp->next = root;
-	root = temp;
-}
-
-template<typename T>
-inline T Priority_Queue<T>::getMin()
-{
-	Node* current = root;
-	Node* lowest = current;
-	T toReturn;
-	if (!root)
-	{
-		throw "Queue is Empty";
-	}
-	while (current != nullptr)
-	{
-		if (current->element < lowest->element)
-		{
-			lowest = current;
-		}
-		current = current->next;
-	}
-	toReturn = lowest->element;
-	removeNode(current);
-	return toReturn;
-}

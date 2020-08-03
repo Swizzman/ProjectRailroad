@@ -22,7 +22,8 @@ public:
 	bool getKnown() const;
 	void setKnown();
 	Node* getLowestCostNode();
-	std::vector<Connection*> getConnectionsAsVector() const;
+	std::vector<Connection*> getUnusedConnectionsAsVector();
+	std::vector<Connection*> getUsedConnectionsAsVector();
 	virtual ~Node();
 };
 
