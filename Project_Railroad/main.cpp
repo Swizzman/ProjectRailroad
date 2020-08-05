@@ -3,11 +3,11 @@
 #include<fstream>
 #include<vector>
 #include"Node.h"
-#include "Priority_Queue.h"
 #include<sstream>
 #include <Windows.h>
 #include <queue>
 #include <functional>
+#include <chrono>
 using namespace std;
 std::vector<string> openFile(string path);
 void writeToFile(std::vector<Node*> arr, std::vector<Connection*> usedCon);
@@ -16,32 +16,25 @@ void primsMST(std::vector<Node*> arr);
 bool cmp(Connection* l, Connection* r);
 int main(int argc, char** argv)
 {
-	//if (argc > 1)
-	//{
+	if (argc > 1)
+	{
 	int startI = 0;
 	int nodeCap = 100;
 	std::vector<Node*> nodes;
-	//Node** nodes = new Node * [nodeCap] {nullptr};
 
 	std::cout << "File path specified, opening file\n";
-	//vector<string> vec = openFile(argv[1]);
-	vector<string> vec = openFile("C:\\Users\\Swizzman\\Desktop\\Stora grafer\\1000-1000.txt");
+	vector<string> vec = openFile(argv[1]);
 	std::cout << "File opened\n";
 	for (int i = 0; i < vec.size() && vec.at(i) != ""; i++)
 	{
-		//std::cout << i << endl;
-		//if (nrOfNodes >= nodeCap)
-		//{
-		//	expand(nodes, nodeCap, nrOfNodes);
-		//}
+
 		nodes.push_back(new Node(vec.at(i)));
-		//nodes.at(i) = new Node(vec.at(i));
 		startI++;
 	}
-	std::cout << "Vec size: " << vec.size() << endl;
+	auto start = std::chrono::steady_clock::now();
+
 	for (int i = startI + 1; i < vec.size(); i++)
 	{
-		//std::cout << i << endl;
 		string currentLine;
 		currentLine = vec.at(i);
 		stringstream ss(currentLine);
@@ -51,15 +44,15 @@ int main(int argc, char** argv)
 		ss >> temp1;
 		ss >> temp2;
 		ss >> cost;
-		//std::cout << "Cost: " << cost << endl;
 		std::vector<int> tempIS = findNode(nodes, temp1, temp2);
 		Connection* tempCon = new Connection(cost, nodes.at(tempIS.at(0)), nodes.at(tempIS.at(1)));
 		nodes.at(tempIS.at(0))->addConnection(tempCon);
 		nodes.at(tempIS.at(1))->addConnection(tempCon);
 	}
-	std::cout << "Running Prims algorithm\n";
 	primsMST(nodes);
-	std::cout << "Prims algorithm run\n";
+	auto end = std::chrono::steady_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
+	std::cout << "Constructing MST took: " << elapsed_seconds.count() << " seconds" << std::endl;
 	std::vector<Connection*> vec2;
 	for (int i = 0; i < nodes.size(); i++)
 	{
@@ -71,21 +64,18 @@ int main(int argc, char** argv)
 	}
 	std::cout << "Vec2 Size: " << vec2.size() << std::endl;
 	writeToFile(nodes, vec2);
-	//for (int i = 0; i < nrOfNodes; i++)
-	//{
-	//	delete nodes[i];
-	//}
-	//delete[] nodes;
-//}
-//else
-//{
-//	std::cout << "Please specify file path\n";
-//}
+
+}
+else
+{
+	std::cout << "Please specify file path\n";
+}
 	return 0;
 }
 
 std::vector<string> openFile(string path)
 {
+	std::cout << path << endl;
 	vector<string> vec;
 	ifstream fileInput(path);
 	string currentLine;
@@ -147,7 +137,6 @@ void primsMST(std::vector<Node*> arr)
 	{
 		for (int i = 0; i < visitedNodes.size(); i++)
 		{
-			//std::cout << i << std::endl;
 			std::vector<Connection*> vec = visitedNodes.at(i)->getUnusedConnectionsAsVector();
 			for (int y = 0; y < vec.size(); y++)
 			{

@@ -6,12 +6,8 @@ class Node
 {
 private:
 	std::string name;
-	int nrOfConnections;
-	int connectionCap;
-	//Connection** connections;
 	std::vector<Connection*> connections;
 	bool known;
-	//void expandConnections();
 public:
 	Node();
 	Node(std::string name);
